@@ -11,6 +11,7 @@ cdef DTYPE_t c_damerau_levenshtein(
 	Py_ssize_t len_a,
 	unsigned char* str_b,
 	Py_ssize_t len_b,
+	DTYPE_t threshold,
 	DTYPE_t[::1] insert_costs,
 	DTYPE_t[::1] delete_costs,
 	DTYPE_t[:,::1] substitute_costs,

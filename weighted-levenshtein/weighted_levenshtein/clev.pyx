@@ -147,6 +147,7 @@ def damerau_levenshtein(
     str str1,
     str str2,
     str encoding,
+    DTYPE_t threshold=DTYPE_MAX,
     DTYPE_t[::1] insert_costs=None,
     DTYPE_t[::1] delete_costs=None,
     DTYPE_t[:,::1] substitute_costs=None,
@@ -179,12 +180,12 @@ def damerau_levenshtein(
         substitute_costs = unit_matrix
     if transpose_costs is None:
         transpose_costs = unit_matrix
-
     s1 = str(str1).encode(encoding)  
     s2 = str(str2).encode(encoding)  
     return c_damerau_levenshtein(
         s1, len(s1),
         s2, len(s2),
+        threshold,
         insert_costs,
         delete_costs,
         substitute_costs,
@@ -197,6 +198,7 @@ dam_lev = damerau_levenshtein
 cdef DTYPE_t c_damerau_levenshtein(
     unsigned char* str1, Py_ssize_t len1,
     unsigned char* str2, Py_ssize_t len2,
+    DTYPE_t threshold,
     DTYPE_t[::1] insert_costs,
     DTYPE_t[::1] delete_costs,
     DTYPE_t[:,::1] substitute_costs,
@@ -209,9 +211,8 @@ cdef DTYPE_t c_damerau_levenshtein(
 
         Py_ssize_t i, j
         unsigned char char_i, char_j
-        DTYPE_t cost, ret_val
+        DTYPE_t cost, ret_val, current_total_cost, min_total_cost
         Py_ssize_t db, k, l
-
         Array2D d
 
     Array2D_init(&d, len1 + 2, len2 + 2)
@@ -243,6 +244,7 @@ cdef DTYPE_t c_damerau_levenshtein(
         char_i = str_1_get(str1, i)
 
         db = 0
+        min_total_cost = DTYPE_MAX
         for j in range(1, len2 + 1):
             char_j = str_1_get(str2, j)
 
@@ -253,7 +255,7 @@ cdef DTYPE_t c_damerau_levenshtein(
                 db = j
             else:
                 cost = substitute_costs[char_i, char_j]
-            Array2D_n1_at(d, i, j)[0] = min(
+            current_total_cost = min(
                 Array2D_n1_get(d, i - 1, j - 1) + cost,                  # equal/substitute
                 Array2D_n1_get(d, i, j - 1) + insert_costs[char_j],    # insert
                 Array2D_n1_get(d, i - 1, j) + delete_costs[char_i],    # delete
@@ -262,10 +264,18 @@ cdef DTYPE_t c_damerau_levenshtein(
                     transpose_costs[str_1_get(str1, k), str_1_get(str1, i)] +   # transpose chars
                     row_insert_range_cost(d, l + 1, j - 1)                        # insert chars in between
             )
-
+            
+            Array2D_n1_at(d, i, j)[0] = current_total_cost
+            if current_total_cost < min_total_cost:
+                min_total_cost = current_total_cost
+                
+        if min_total_cost > threshold: # if the current cost is bigger than threshold
+                return -1 # return meaningless value
         da[char_i] = i
 
     ret_val = Array2D_n1_get(d, len1, len2)
+    if ret_val > threshold: # sometimes threshold doesn't apply, for those use this if
+        return -1
     Array2D_del(d)
     return ret_val
 

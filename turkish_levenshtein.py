@@ -35,16 +35,16 @@ def turkish_levenshtein(
     source_words,
     target_word,
     *,
-    threshold=None,
+    threshold=np.finfo(np.float64).max,
     insert_costs=None,
-    subtitute_costs=None,
+    substitute_costs=None,
     delete_costs=None,
     adjacent_insert_cost=None
 ):
     # TODO: not sure, word counts belong here
     # dist_list = []
     for word in source_words:
-        dist = dam_lev(word, target_word, encoding=TURKISH_ENCODING)
+        dist = dam_lev(word, target_word, threshold=threshold, encoding=TURKISH_ENCODING, insert_costs=insert_costs, substitute_costs=substitute_costs, delete_costs=delete_costs)
         yield (dist, word)
         # dist_list.append((dist, word))
     # return dist_list

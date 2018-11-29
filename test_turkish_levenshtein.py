@@ -17,6 +17,7 @@ substitute_chars = [
     ("0", "o"),
     ("e", "i"),
 ]
+# ('y', 'ğ')
 
 
 def write_data(filename, data):
@@ -28,8 +29,8 @@ def write_data(filename, data):
 if __name__ == "__main__":
     insert_costs = t_lev.initiliaze_costs(insert_chars, 0.1)
     delete_costs = t_lev.initiliaze_costs(delete_chars, 0.1)
-    subtitute_costs = t_lev.initiliaze_costs(substitute_chars, 0.1)
-    vocab = read_data("./vocab_with_count.txt")
+    substitute_costs = t_lev.initiliaze_costs(substitute_chars, 0.1)
+    vocab = read_data("./data/vocab_with_count.txt")
     vocab_list = list(vocab)
     target_word = "geliyorum"
     # TODO: pre grouping can be done
@@ -37,13 +38,17 @@ if __name__ == "__main__":
     results = t_lev.turkish_levenshtein(
         source_words,
         target_word,
+        threshold=2.0,
         insert_costs=insert_costs,
         delete_costs=delete_costs,
-        subtitute_costs=subtitute_costs,
+        substitute_costs=substitute_costs,
     )
     result_list = []
     for dist, word in results:
         count = vocab[word]
+        if dist == -1:
+            print('Word: %s - No Result!' % word)
+            continue
         result_list.append((dist, count, word))
         print("Word: %s - Score: %f" % (word, dist))
 
