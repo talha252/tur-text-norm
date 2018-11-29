@@ -35,7 +35,7 @@ def turkish_levenshtein(
     source_words,
     target_word,
     *,
-    threshold=np.finfo(np.float64).max,
+    threshold=None,
     ignore_repeating_char=True,
     insert_costs=None,
     substitute_costs=None,
@@ -44,6 +44,8 @@ def turkish_levenshtein(
 ):
     # TODO: not sure, word counts belong here
     # dist_list = []
+    if threshold is None:
+        threshold = np.finfo(np.float64).max
     if ignore_repeating_char:
         delete_repeating_costs = np.zeros(256, dtype=np.float64)
 
