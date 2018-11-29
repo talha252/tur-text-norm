@@ -36,6 +36,7 @@ def turkish_levenshtein(
     target_word,
     *,
     threshold=np.finfo(np.float64).max,
+    ignore_repeating_char=True,
     insert_costs=None,
     substitute_costs=None,
     delete_costs=None,
@@ -43,8 +44,20 @@ def turkish_levenshtein(
 ):
     # TODO: not sure, word counts belong here
     # dist_list = []
+    if ignore_repeating_char:
+        delete_repeating_costs = np.zeros(256, dtype=np.float64)
+
     for word in source_words:
-        dist = dam_lev(word, target_word, threshold=threshold, encoding=TURKISH_ENCODING, insert_costs=insert_costs, substitute_costs=substitute_costs, delete_costs=delete_costs)
+        dist = dam_lev(
+            word,
+            target_word,
+            threshold=threshold,
+            encoding=TURKISH_ENCODING,
+            insert_costs=insert_costs,
+            substitute_costs=substitute_costs,
+            delete_costs=delete_costs,
+            delete_repeating_costs=delete_repeating_costs,
+        )
         yield (dist, word)
         # dist_list.append((dist, word))
     # return dist_list

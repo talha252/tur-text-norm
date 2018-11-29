@@ -6,6 +6,8 @@ from libc.stdlib cimport malloc, free
 from cython.view cimport array as cvarray
 from .clev cimport DTYPE_t, DTYPE_MAX, ALPHABET_SIZE
 
+from libc.stdio cimport printf
+
 
 cyarr = cvarray(shape=(ALPHABET_SIZE,), itemsize=sizeof(double), format="d")
 cdef DTYPE_t[::1] unit_array = cyarr
@@ -150,6 +152,7 @@ def damerau_levenshtein(
     DTYPE_t threshold=DTYPE_MAX,
     DTYPE_t[::1] insert_costs=None,
     DTYPE_t[::1] delete_costs=None,
+    DTYPE_t[::1] delete_repeating_costs=None,
     DTYPE_t[:,::1] substitute_costs=None,
     DTYPE_t[:,::1] transpose_costs=None):
     """
@@ -176,6 +179,8 @@ def damerau_levenshtein(
         insert_costs = unit_array
     if delete_costs is None:
         delete_costs = unit_array
+    if delete_repeating_costs is None:
+        delete_repeating_costs = unit_array
     if substitute_costs is None:
         substitute_costs = unit_matrix
     if transpose_costs is None:
@@ -188,6 +193,7 @@ def damerau_levenshtein(
         threshold,
         insert_costs,
         delete_costs,
+        delete_repeating_costs,
         substitute_costs,
         transpose_costs
     )
@@ -201,6 +207,7 @@ cdef DTYPE_t c_damerau_levenshtein(
     DTYPE_t threshold,
     DTYPE_t[::1] insert_costs,
     DTYPE_t[::1] delete_costs,
+    DTYPE_t[::1] delete_repeating_costs,
     DTYPE_t[:,::1] substitute_costs,
     DTYPE_t[:,::1] transpose_costs) nogil:
     """
@@ -210,13 +217,12 @@ cdef DTYPE_t c_damerau_levenshtein(
         Py_ssize_t[ALPHABET_SIZE] da
 
         Py_ssize_t i, j
-        unsigned char char_i, char_j
-        DTYPE_t cost, ret_val, current_total_cost, min_total_cost
+        unsigned char char_i, char_j, char_p
+        DTYPE_t cost, del_cost, ret_val, current_total_cost, min_total_cost
         Py_ssize_t db, k, l
         Array2D d
 
     Array2D_init(&d, len1 + 2, len2 + 2)
-
     # initialize 'da' to all 0
     for i in range(ALPHABET_SIZE):
         da[i] = 0
@@ -239,30 +245,37 @@ cdef DTYPE_t c_damerau_levenshtein(
         cost = insert_costs[char_j]
         Array2D_n1_at(d, 0, j)[0] = Array2D_n1_get(d, 0, j - 1) + cost
 
+    char_p = str_1_get(str1, 2)
     # fill DP array
     for i in range(1, len1 + 1):
         char_i = str_1_get(str1, i)
-
         db = 0
         min_total_cost = DTYPE_MAX
         for j in range(1, len2 + 1):
             char_j = str_1_get(str2, j)
-
             k = da[char_j]
             l = db
+            # printf('char_i: %c, char_j: %c, char_p: %c\n', char_i, char_j, char_p)
             if char_i == char_j:
                 cost = 0
                 db = j
             else:
                 cost = substitute_costs[char_i, char_j]
+
+            # if we want to delete a repeating char, then use the repeating cost table
+            if char_i == char_p:
+                del_cost = delete_repeating_costs[char_i]
+            else:
+                del_cost = delete_costs[char_i]
+
             current_total_cost = min(
-                Array2D_n1_get(d, i - 1, j - 1) + cost,                  # equal/substitute
+                Array2D_n1_get(d, i - 1, j - 1) + cost,                # equal/substitute
                 Array2D_n1_get(d, i, j - 1) + insert_costs[char_j],    # insert
-                Array2D_n1_get(d, i - 1, j) + delete_costs[char_i],    # delete
-                Array2D_n1_get(d, k - 1, l - 1) +                        # transpose
-                    col_delete_range_cost(d, k + 1, i - 1) +                      # delete chars in between
+                Array2D_n1_get(d, i - 1, j) + del_cost,                # delete/delete repeating
+                Array2D_n1_get(d, k - 1, l - 1) +                      # transpose
+                    col_delete_range_cost(d, k + 1, i - 1) +                    # delete chars in between
                     transpose_costs[str_1_get(str1, k), str_1_get(str1, i)] +   # transpose chars
-                    row_insert_range_cost(d, l + 1, j - 1)                        # insert chars in between
+                    row_insert_range_cost(d, l + 1, j - 1)                      # insert chars in between
             )
             
             Array2D_n1_at(d, i, j)[0] = current_total_cost
@@ -272,6 +285,7 @@ cdef DTYPE_t c_damerau_levenshtein(
         if min_total_cost > threshold: # if the current cost is bigger than threshold
                 return -1 # return meaningless value
         da[char_i] = i
+        char_p = char_i
 
     ret_val = Array2D_n1_get(d, len1, len2)
     if ret_val > threshold: # sometimes threshold doesn't apply, for those use this if
