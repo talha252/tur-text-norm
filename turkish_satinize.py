@@ -2,7 +2,7 @@ import unicodedata as ud
 
 lcase_table = "abcçdefgğhıijklmnoöprsştuüvyz\u00E2\u00EE\u00FB\u00F4"
 ucase_table = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ\u00C2\u00CE\u00DB\u00D4"
-subs_table = [("$", "ş"), ("q", "g"), ("0", "o"), ("€", "e"), ("ß", "b"), ("@", "a")]
+subs_table = [("$", "ş"), ("q", "g"), ("0", "o"), ("€", "e"), ("ß", "b"), ("@", "a"), ('w', 'v'), ("μ", "u"), ('ø', 'o'), ('æ', 'a')]
 
 low_translate_table = {ord(f_c): t_c for f_c, t_c in zip(ucase_table, lcase_table)}
 subs_translate_table = {ord(f_c): t_c for f_c, t_c in subs_table}

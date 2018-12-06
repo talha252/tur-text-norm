@@ -4,21 +4,34 @@ import turkish_levenshtein as t_lev
 from utils import read_data
 from turkish_satinize import turkishCompare
 
-insert_chars = "aeıioöuüğyr"
+insert_chars = "aeıioöuüğyr'h"
 substitute_chars = [
+    ("@", "a"),
+    ('æ', 'a'),
+    ("€", "e"),
     ("ı", "i"),
+    ("e", "i"),
+    ("μ", "u"),
+    ("μ", "ü"),
     ("u", "ü"),
     ("o", "ö"),
+    ("0", "o"),
+    ('ø', 'o'),
+    ("0", "ö"),
+    ('ø', 'ö'),
+    ("ß", "b"),
+    ("c", "ç"),
     ("g", "ğ"),
     ("q", "g"),
     ("q", "ğ"),
-    ("c", "ç"),
     ("s", "ş"),
     ("$", "ş"),
-    ("0", "o"),
-    ("e", "i"),
-    ("y", "ğ")
+    ("$", "s"),
+    ("y", "ğ"),
+    ("w", "v"),
 ]
+
+delete_char = "ıi" # sıtandart, tiren 
 
 def make_parser(prog):
     parser = ArgumentParser(prog=prog)
