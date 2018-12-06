@@ -29,10 +29,11 @@ def shave_accents(src_str):
 
 
 def turkishSanitize(src_str):
-    src_str = turkishSubstitute(
-        src_str
-    )  # first substitute commonly wrong written chars
+    # first replace german character, because it's lowercase different
+    src_str = src_str.replace('ß', 'b')
     src_str = turkishLower(src_str)  # make it lower case
+    # substitute commonly wrong written chars
+    src_str = turkishSubstitute(src_str) 
     return shave_accents(src_str)  # shave accents
 
 
