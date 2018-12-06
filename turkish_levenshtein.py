@@ -38,6 +38,7 @@ def turkish_levenshtein(
     threshold=None,
     ignore_repeating_char=True,
     insert_costs=None,
+    delete_adjacent_costs=None,
     substitute_costs=None,
     delete_costs=None,
     adjacent_insert_cost=None
@@ -58,6 +59,7 @@ def turkish_levenshtein(
             insert_costs=insert_costs,
             substitute_costs=substitute_costs,
             delete_costs=delete_costs,
+            delete_adjacent_costs=delete_adjacent_costs,
             delete_repeating_costs=delete_repeating_costs,
         )
         yield (dist, word)

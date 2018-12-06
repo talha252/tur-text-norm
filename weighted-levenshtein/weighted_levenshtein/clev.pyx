@@ -151,6 +151,7 @@ def damerau_levenshtein(
     str encoding,
     DTYPE_t threshold=DTYPE_MAX,
     DTYPE_t[::1] insert_costs=None,
+    DTYPE_t[:,::1] delete_adjacent_costs=None,
     DTYPE_t[::1] delete_costs=None,
     DTYPE_t[::1] delete_repeating_costs=None,
     DTYPE_t[:,::1] substitute_costs=None,
@@ -177,6 +178,8 @@ def damerau_levenshtein(
     """
     if insert_costs is None:
         insert_costs = unit_array
+    if delete_adjacent_costs is None:
+        delete_adjacent_costs = unit_matrix
     if delete_costs is None:
         delete_costs = unit_array
     if delete_repeating_costs is None:
@@ -193,6 +196,7 @@ def damerau_levenshtein(
         threshold,
         insert_costs,
         delete_costs,
+        delete_adjacent_costs,
         delete_repeating_costs,
         substitute_costs,
         transpose_costs
@@ -207,6 +211,7 @@ cdef DTYPE_t c_damerau_levenshtein(
     DTYPE_t threshold,
     DTYPE_t[::1] insert_costs,
     DTYPE_t[::1] delete_costs,
+    DTYPE_t[:,::1] delete_adjacent_costs,
     DTYPE_t[::1] delete_repeating_costs,
     DTYPE_t[:,::1] substitute_costs,
     DTYPE_t[:,::1] transpose_costs) nogil:
@@ -255,23 +260,30 @@ cdef DTYPE_t c_damerau_levenshtein(
             char_j = str_1_get(str2, j)
             k = da[char_j]
             l = db
-            # printf('char_i: %c, char_j: %c, char_p: %c\n', char_i, char_j, char_p)
             if char_i == char_j:
                 cost = 0
                 db = j
             else:
                 cost = substitute_costs[char_i, char_j]
-
             # if we want to delete a repeating char, then use the repeating cost table
             if char_i == char_p:
                 del_cost = delete_repeating_costs[char_i]
+            elif char_i == char_j:
+                # if currently selected characters are the same then it's possible that
+                # adjacent character of current character might be inserted previously
+                # then we subtract insertion cost of that character and replace with delete_adjancency_cost
+                # of adjacent character.
+                # for example: geklecem --> gelecem (k inserted previosly)
+                del_cost = delete_adjacent_costs[char_i, char_p] - insert_costs[char_p]
             else:
-                del_cost = delete_costs[char_i]
+                # it's possible that adjacent character added after than current char
+                # for example:  gelkecem -> gelecem
+                del_cost = min(delete_costs[char_i], delete_adjacent_costs[char_i, char_j])
 
             current_total_cost = min(
                 Array2D_n1_get(d, i - 1, j - 1) + cost,                # equal/substitute
                 Array2D_n1_get(d, i, j - 1) + insert_costs[char_j],    # insert
-                Array2D_n1_get(d, i - 1, j) + del_cost,                # delete/delete repeating
+                Array2D_n1_get(d, i - 1, j) + del_cost,                # delete/delete repeating/delete adjancent
                 Array2D_n1_get(d, k - 1, l - 1) +                      # transpose
                     col_delete_range_cost(d, k + 1, i - 1) +                    # delete chars in between
                     transpose_costs[str_1_get(str1, k), str_1_get(str1, i)] +   # transpose chars
@@ -281,7 +293,8 @@ cdef DTYPE_t c_damerau_levenshtein(
             Array2D_n1_at(d, i, j)[0] = current_total_cost
             if current_total_cost < min_total_cost:
                 min_total_cost = current_total_cost
-                
+            # printf('char_i: %c, char_j: %c, char_p: %c, COST: %.2f\n', char_i, char_j, char_p, current_total_cost)
+            # printf('ins_cost: %.2f, ins_adj_cost: %.2f\n', insert_costs[char_j], delete_adjacent_costs[char_i, char_j])
         if min_total_cost > threshold: # if the current cost is bigger than threshold
                 return -1 # return meaningless value
         da[char_i] = i
