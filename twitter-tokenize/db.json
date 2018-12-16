@@ -1,0 +1,12 @@
+{
+    "database":
+    {
+        "host": "localhost",
+        "port": 27017,
+        "name": "twitter",
+        "readfrom": "tweets",
+        "writeto": "tweet_tests",
+        "tweet_id": "id_str",
+        "text": "text"
+    }
+}
