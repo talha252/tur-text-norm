@@ -56,7 +56,7 @@ pipeline = [
                 "$cond": {
                     "if": {"$and": ["$retweeted_status", 1]},
                     "then": {
-                        "timestamp_ms": "$retweeted_status.created_at",
+                        "timestamp_ms": "$retweeted_status.timestamp_ms",
                         "tweet_id": "$retweeted_status.id_str",
                         "full_text": {
                             "$cond": {

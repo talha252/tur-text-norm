@@ -8,7 +8,7 @@
     },
     "database":
     {
-        "name": "twitter_test",
+        "name": "twitter",
         "raw_collection": "tweets",
         "processed_collection": "unified_tweets"
     }
