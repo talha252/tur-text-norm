@@ -1,11 +1,7 @@
 import sys
-from os import path
-
-# package hack :(
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-
 import twitter
-from utils import connect_database, get_twitter_config
+from os import path
+from tur_text_norm.utils.utils import connect_database, get_twitter_config
 
 
 def read_stopwords(path):

@@ -1,4 +1,4 @@
-from weighted_levenshtein import dam_lev
+from .weighted_levenshtein import dam_lev
 import numpy as np
 
 # TODO: add docstrings

@@ -1,9 +1,6 @@
 import sys
 from os import path
-
-# package hack :(
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from utils import connect_database, get_twitter_config
+from tur_text_norm.utils.utils import connect_database, get_twitter_config
 
 
 TWITTER_CONFIG_FILE = "./twitter_config.json"
