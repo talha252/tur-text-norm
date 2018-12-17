@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 from setuptools import setup, find_packages
-
+from Cython.Build import cythonize
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
@@ -21,11 +21,18 @@ setup(
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Natural Language :: Turkish',
         'Operating System :: OS Independent',
+        'Programming Language :: Cython',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Text Processing :: Linguistic',
         'Topic :: Utilities'
     ],
     keywords='turkish text normalization',
     packages=find_packages(include=["tur_text_norm"]),
+    setup_requires=[
+        'setuptools >= 18.0',
+        'cython'
+    ],
+    ext_modules=cythonize("tur_text_norm/turkish_levenshtein/weighted_levenshtein/clev.pyx")
 )
