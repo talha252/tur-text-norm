@@ -26,31 +26,32 @@ PATTERNS = [
 ]
 TOKENS_PATTERN = re.compile("|".join("(?P<%s>%s)" % pair for pair in PATTERNS))
 
-def tokenizer(reader, writer, tokens, verbose):
-    for tweet_id, tweet_text in reader:
-        if verbose > 0:
-            print(f"Processing Tweet - {tweet_id}")
-        if verbose > 1:
-            print(f"TWEET TEXT:\"{tweet_text}\"")
-        if verbose > 2:
-            print("FOUND TOKENS:")
-        entities = {token: defaultdict(list) for token in tokens}
-        result = {"id": tweet_id, "text": tweet_text, "entities": entities}
+def tokenizer(tweet, tokens, verbose=0):
+    tweet_id, tweet_text = tweet
+    if verbose > 0:
+        print(f"Processing Tweet - {tweet_id}")
+    if verbose > 1:
+        print(f"TWEET TEXT:\"{tweet_text}\"")
+    if verbose > 2:
+        print("FOUND TOKENS:")
 
-        for mo in TOKENS_PATTERN.finditer(tweet_text):
-            kind = mo.lastgroup
-            value = mo.group()
-            beg, end = mo.span()
-            offset = 0
-            # eliminate non-capturing group
-            if kind == "hashtags":
-                offset = re.search(HT_SIGNS, value).start()
-            elif kind == "mentions":
-                offset = re.search(AT_SIGNS, value).start()
-            value = value[offset:]
-            beg = beg + offset
-            if verbose > 2:
-                print(f"{kind} = \"{value}\" ({beg}, {end})")
-            if kind in tokens:
-                result["entities"][kind][value].append((beg, end))
-        writer(result)
+    entities = {token: defaultdict(list) for token in tokens}
+    result = {"id": tweet_id, "text": tweet_text, "entities": entities}
+
+    for mo in TOKENS_PATTERN.finditer(tweet_text):
+        kind = mo.lastgroup
+        value = mo.group()
+        beg, end = mo.span()
+        offset = 0
+        # eliminate non-capturing group
+        if kind == "hashtags":
+            offset = re.search(HT_SIGNS, value).start()
+        elif kind == "mentions":
+            offset = re.search(AT_SIGNS, value).start()
+        value = value[offset:]
+        beg = beg + offset
+        if verbose > 2:
+            print(f"{kind} = \"{value}\" ({beg}, {end})")
+        if kind in tokens:
+            result["entities"][kind][value].append((beg, end))
+    return result

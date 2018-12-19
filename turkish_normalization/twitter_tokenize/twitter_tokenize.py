@@ -26,8 +26,10 @@ def main():
         reader = default_reader()
     else:
         reader = eval()
-    print(args.verbose)
-    tokenizer(reader, writer, args.tokens, args.verbose)    
+
+    for tweet in reader:
+        result = tokenizer(tweet, args.tokens, args.verbose)
+        writer(result)
 
 if __name__ == "__main__":
     main()
