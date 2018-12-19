@@ -1,8 +1,8 @@
 from argparse import ArgumentParser
 
-import turkish_levenshtein as t_lev
-from utils import read_data
-from turkish_satinize import turkishCompare
+import turkish_normalization.turkish_levenshtein as t_lev
+from turkish_normalization.utils import read_data
+from turkish_normalization.utils.turkish_satinize import turkishCompare
 
 insert_chars = "aeıioöuüğyr'h"
 substitute_chars = [
@@ -24,6 +24,7 @@ substitute_chars = [
     ("g", "ğ"),
     ("q", "g"),
     ("q", "ğ"),
+    ("q", "k"),
     ("s", "ş"),
     ("$", "ş"),
     ("$", "s"),
