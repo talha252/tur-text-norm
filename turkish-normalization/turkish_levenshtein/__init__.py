@@ -1,1 +1,1 @@
-from tur_text_norm.turkish_levenshtein.turkish_levenshtein import *
+from turkish_normalization.turkish_levenshtein.turkish_levenshtein import *

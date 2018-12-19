@@ -6,7 +6,7 @@ with open('README.md') as readme_file:
     readme = readme_file.read()
 
 setup(
-    name='tur_text_norm',
+    name='turkish-normalization',
     version='0.0.1a',
     description='A complete text normalizer framework for Turkish language',
     long_description=readme,
@@ -34,5 +34,10 @@ setup(
         'setuptools >= 18.0',
         'cython'
     ],
-    ext_modules=cythonize("tur_text_norm/turkish_levenshtein/weighted_levenshtein/clev.pyx")
+    entry_points = {
+        'console_scripts': [
+            "tweet-grabber=turkish_normalization.twitter_scrape.tweet_grabber:main"
+        ],
+    },
+    ext_modules=cythonize("turkish_normalization/turkish_levenshtein/weighted_levenshtein/clev.pyx")
 )

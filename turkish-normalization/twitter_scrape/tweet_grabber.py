@@ -1,7 +1,7 @@
 import sys
 import twitter
 from os import path
-from tur_text_norm.utils.utils import connect_database, get_twitter_config
+from turkish_normalization.utils import connect_database, get_twitter_config
 
 
 def read_stopwords(path):
