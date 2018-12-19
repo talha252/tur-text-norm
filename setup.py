@@ -6,7 +6,7 @@ with open('README.md') as readme_file:
     readme = readme_file.read()
 
 setup(
-    name='turkish-normalization',
+    name='turkish_normalization',
     version='0.0.1a',
     description='A complete text normalizer framework for Turkish language',
     long_description=readme,
@@ -29,7 +29,7 @@ setup(
         'Topic :: Utilities'
     ],
     keywords='turkish text normalization',
-    packages=find_packages(include=["tur_text_norm"]),
+    packages=find_packages(include=["turkish_normalization"]),
     setup_requires=[
         'setuptools >= 18.0',
         'cython'

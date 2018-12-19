@@ -8,10 +8,9 @@ numpy = "*"
 python-twitter = "*"
 pymongo = "*"
 cython = "*"
-e1839a8 = {editable = true,path = "."}
-tur-text-norm = {editable = true,path = "."}
 
 [dev-packages]
+turkish-normalization = {editable = true,path = "."}
 
 [requires]
 python_version = "3.6"
