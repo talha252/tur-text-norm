@@ -35,8 +35,8 @@ def tokenizer(tweet, tokens, verbose=0):
     if verbose > 2:
         print("FOUND TOKENS:")
 
-    entities = {token: defaultdict(list) for token in tokens}
-    result = {"id": tweet_id, "text": tweet_text, "entities": entities}
+    entities = {token: [] for token in tokens}
+    result = {"tweet_id": tweet_id, "text": tweet_text, "entities": entities}
 
     for mo in TOKENS_PATTERN.finditer(tweet_text):
         kind = mo.lastgroup
@@ -53,5 +53,5 @@ def tokenizer(tweet, tokens, verbose=0):
         if verbose > 2:
             print(f"{kind} = \"{value}\" ({beg}, {end})")
         if kind in tokens:
-            result["entities"][kind][value].append((beg, end))
+            result["entities"][kind].append({"value": value, "indices": (beg, end)})
     return result
