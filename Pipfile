@@ -10,6 +10,7 @@ pymongo = "*"
 cython = "*"
 e1839a8 = {editable = true,path = "."}
 turkish-normalization = {editable = true,path = "."}
+unidecode = "*"
 
 [requires]
 python_version = "3.6"

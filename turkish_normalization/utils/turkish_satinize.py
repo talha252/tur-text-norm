@@ -1,5 +1,4 @@
-import unicodedata as ud
-
+from unidecode import unidecode
 
 turkish_lcase = "abcçdefgğhıijklmnoöprsştuüvyz"
 turkish_ucase = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
@@ -47,7 +46,7 @@ def turkish_sanitize(src_str):
     src_str = turkish_lower(src_str)  # make it lower case
     # substitute commonly wrong written chars
     src_str = turkish_substitute(src_str)
-    return shave_accents(src_str)  # shave accents
+    return unidecode(src_str)  # shave accents
 
 
 def turkish_compare(str1, str2):
