@@ -14,6 +14,10 @@ subs_table = [
     ("μ", "u"),
     ("ø", "o"),
     ("æ", "a"),
+    ("@", "a"),
+    ("ı", "i"),
+    ("μ", "u"),
+
 ]
 
 low_translate_table = {ord(f_c): t_c for f_c, t_c in zip(turkish_ucase, turkish_lcase)}
@@ -36,10 +40,6 @@ def shave_accents(src_str):
     norm_txt = ud.normalize("NFD", src_str)
     shaved = "".join(c for c in norm_txt if not ud.combining(c))
     return ud.normalize("NFC", shaved)
-
-
-# TODO: if we are gonna shave accents than we dont need turkish_lower
-# TODO: however we need to shave accents of öçğşü (or é) but not i
 
 
 def turkish_sanitize(src_str):
