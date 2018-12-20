@@ -24,7 +24,14 @@ def default_reader():
         yield (res[_id], res[_text])
 
 def default_writer(tokenized):
-    db[WRITE_COLLECTION].insert_one(tokenized)
+    tweet_id = tokenized["tweet_id"]
+    entities = tokenized["entities"]
+    db[WRITE_COLLECTION].update({"_id": tweet_id}, {"$set": 
+                                                        {"entities.words": entities["words"],
+                                                         "entities.emoticons": entities["emoticons"],
+                                                         "entities.keywords": entities["keywords"],
+                                                         "entities.emails": entities["emails"]}})
+    # db[WRITE_COLLECTION].insert_one(tokenized)
 
 if __name__ != "__main__":
     cfg = get_config("./db.json") # TODO: değişecek burası
