@@ -42,7 +42,7 @@ def shave_accents(src_str):
 # TODO: however we need to shave accents of öçğşü (or é) but not i
 
 
-def turkishSanitize(src_str):
+def turkish_sanitize(src_str):
     # first replace german character, because it's lowercase different
     src_str = src_str.replace("ß", "b")
     src_str = turkish_lower(src_str)  # make it lower case
@@ -51,5 +51,5 @@ def turkishSanitize(src_str):
     return shave_accents(src_str)  # shave accents
 
 
-def turkishCompare(str1, str2):
+def turkish_compare(str1, str2):
     return turkish_sanitize(str1) == turkish_sanitize(str2)
