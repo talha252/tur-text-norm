@@ -20,8 +20,10 @@ low_translate_table = {ord(f_c): t_c for f_c, t_c in zip(turkish_ucase, turkish_
 subs_translate_table = {ord(f_c): t_c for f_c, t_c in subs_table}
 
 
-def turkishLower(src_str):
+def turkish_lower(src_str):
+    # first translate turkish characters
     src_str = src_str.translate(low_translate_table)
+    # then translate rest of it
     return src_str.casefold()
 
 
@@ -42,8 +44,8 @@ def shave_accents(src_str):
 
 def turkishSanitize(src_str):
     # first replace german character, because it's lowercase different
-    src_str = src_str.replace('ß', 'b')
-    src_str = turkishLower(src_str)  # make it lower case
+    src_str = src_str.replace("ß", "b")
+    src_str = turkish_lower(src_str)  # make it lower case
     # substitute commonly wrong written chars
     src_str = turkishSubstitute(src_str) 
     return shave_accents(src_str)  # shave accents
