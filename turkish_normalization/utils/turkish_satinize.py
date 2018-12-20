@@ -27,7 +27,7 @@ def turkish_lower(src_str):
     return src_str.casefold()
 
 
-def turkishSubstitute(src_str):
+def turkish_substitute(src_str):
     return src_str.translate(subs_translate_table)
 
 
@@ -47,9 +47,9 @@ def turkishSanitize(src_str):
     src_str = src_str.replace("ß", "b")
     src_str = turkish_lower(src_str)  # make it lower case
     # substitute commonly wrong written chars
-    src_str = turkishSubstitute(src_str) 
+    src_str = turkish_substitute(src_str)
     return shave_accents(src_str)  # shave accents
 
 
 def turkishCompare(str1, str2):
-    return turkishSanitize(str1) == turkishSanitize(str2)
+    return turkish_sanitize(str1) == turkish_sanitize(str2)
