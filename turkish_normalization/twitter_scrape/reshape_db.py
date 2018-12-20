@@ -14,6 +14,7 @@ db = connect_database(DATABASE_NAME)
 tweets = db.tweets
 
 pipeline = [
+    # eliminates possibly sensitive tweets
     {
         "$match": {
             "$or": [
@@ -21,10 +22,15 @@ pipeline = [
                 {"possible_sensitive": {"$exists": False}},
             ]
         }
-    },  # eliminates possibly sensitive tweets
+    },
+    # eliminate ill formed tweet objects
+    {
+        "$match": {"id_str": {"$exists": True}}
+    },
+    # unifies tweets into one shape (removes entended_tweet attributes essentially and other unnecessary attributes for us)
     {
         "$project": {
-            "timestamp_ms": 1,
+            "created_at": 1,
             "tweet_id": "$id_str",
             "full_text": {
                 "$cond": {
@@ -53,7 +59,7 @@ pipeline = [
                 "$cond": {
                     "if": {"$and": ["$retweeted_status", 1]},
                     "then": {
-                        "timestamp_ms": "$retweeted_status.timestamp_ms",
+                        "created_at": "$retweeted_status.created_at",
                         "tweet_id": "$retweeted_status.id_str",
                         "full_text": {
                             "$cond": {
@@ -74,7 +80,7 @@ pipeline = [
                             "id": "$retweeted_status.user.id_str",
                             "screen_name": "$retweeted_status.user.screen_name",
                             "verified": "$retweeted_status.user.verified",
-                            "follower_count": "$retweeted_status.user.followers_count",
+                            "followers_count": "$retweeted_status.user.followers_count",
                             "lang": "$retweeted_status.user.lang",
                         },
                     },
@@ -85,7 +91,7 @@ pipeline = [
                 "$cond": {
                     "if": {"$and": ["$quoted_status", 1]},
                     "then": {
-                        "timestamp_ms": "$quoted_status.created_at",
+                        "created_at": "$quoted_status.created_at",
                         "tweet_id": "$quoted_status.id_str",
                         "full_text": {
                             "$cond": {
@@ -106,7 +112,7 @@ pipeline = [
                             "id": "$quoted_status.user.id_str",
                             "screen_name": "$quoted_status.user.screen_name",
                             "verified": "$rquoted_status.user.verified",
-                            "follower_count": "$quoted_status.user.followers_count",
+                            "followers_count": "$quoted_status.user.followers_count",
                             "lang": "$quoted_status.user.lang",
                         },
                     },
@@ -115,7 +121,55 @@ pipeline = [
             },
         }
     },
+    # divides tweet object into two tweet object (one of them original & the other is quoted tweet)
+    {
+        "$project":
+        {
+            "tweets": ["$$CURRENT", "$quote"]
+        }
+    },
+    # this makes it two seperate mongodb document
+    {
+        "$unwind": "$tweets"
+
+    },
+    # eliminate null objects (which means eliminates quoted tweet object if it doesn't exist)
+    {
+        "$match": {"tweets": {"$ne": None}}
+    },
+    # eliminates unnecessary tweets root attribute
+    # seperation of tweet object is now done here
+    {
+        "$replaceRoot":
+        {
+            "newRoot": "$tweets"
+        }
+
+    },
+    # if the tweet is a retweet, then this stage makes the retweet object as root object
+    # this essentially means we eliminate retweets and only keep original tweets
+    {
+        "$replaceRoot":{ 
+            "newRoot": {
+                "$cond":{ "if": {"$eq": ["$is_retweeted", True]},
+                     "then": "$retweet",
+                     "else": "$$CURRENT"
+                }
+            }
+        }
+    },
+    {
+        "$group": {
+            "_id": "$tweet_id",
+            "created_at": {"$first": "$created_at"},
+            # "tweet_id": {"$first": "$tweet_id"},
+            "full_text": {"$first": "$full_text"},
+            "user": {"$first": "$user"},
+            "entities": {"$first": "$entities"},
+            "is_extended": {"$first": "$is_extended"},
+        }
+    },
     {"$out": PROCESSED_COLLECTION},
 ]
 if __name__ == "__main__":
-    db[RAW_COLLECTION].aggregate(pipeline=pipeline)
+    db[RAW_COLLECTION].aggregate(pipeline=pipeline, allowDiskUse=True)
