@@ -1,0 +1,10 @@
+[credentials]
+consumer_key = "xxxxxxxxxxxxxxxxx"
+consumer_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+access_token_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+access_token_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+[database]
+name = "twitter"
+raw_collection = "tweets1"
+processed_collection = "aggregate_out"

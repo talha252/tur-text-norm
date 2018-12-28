@@ -1,4 +1,5 @@
-import json
+import toml
+from .config import Config
 from pymongo import MongoClient
 
 
@@ -10,9 +11,12 @@ def write_json(filename, data):
     with open(filename, 'w') as fp:
         json.dump(data, fp, indent=4, ensure_ascii=False, sort_keys=True)
         
-def get_twitter_config(path):
+def get_config(path):
+    if not path.endswith(".toml"):
+        raise ValueError("Config file should be TOML file")
     with open(path) as cf:
-        return json.load(cf)
+        tml = toml.load(cf)
+        return Config(**tml)
 
 def connect_database(database, host="localhost", port=27017):
     client = MongoClient(f"mongodb://{host}:{port}")

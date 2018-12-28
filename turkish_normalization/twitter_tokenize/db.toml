@@ -1,0 +1,8 @@
+[database]
+host = "localhost"
+port = 27017
+name = "twitter"
+readfrom = "tweets1"
+writeto = "tweets1_out"
+tweet_id = "_id"
+text = "text"

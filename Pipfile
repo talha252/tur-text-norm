@@ -11,6 +11,8 @@ cython = "*"
 e1839a8 = {editable = true,path = "."}
 turkish-normalization = {editable = true,path = "."}
 unidecode = "*"
+redis = "*"
+toml = "*"
 
 [requires]
 python_version = "3.6"

@@ -1,23 +1,26 @@
 import sys
 import twitter
 from os import path
-from turkish_normalization.utils import connect_database, get_twitter_config
+from turkish_normalization.utils import connect_database, get_config
 
+# TODO: parametretize et, stopword path ve config dosyalarını ordan al
+# TODO: constantları modülün içerisinden çıkar
 
 def read_stopwords(path):
     with open(path) as fp:
         content = fp.read()
         return content.split()
 
+mdir = path.dirname(path.realpath(__file__))
 
-TWITTER_CONFIG_FILE = "./twitter_config.json"
-STOPWORDS_PATH = "../data/stopwords.txt"
+TWITTER_CONFIG_FILE = path.join(mdir, "twitter_config.toml")
+STOPWORDS_PATH = "./data/stopwords.txt"
 stopwords = read_stopwords(STOPWORDS_PATH)
 
-cf = get_twitter_config(TWITTER_CONFIG_FILE)
-api = twitter.Api(**cf["credentials"])
-DATABASE_NAME = cf["database"]["name"]
-COLLECTION = cf["database"]["raw_collection"]
+cfg = get_config(TWITTER_CONFIG_FILE)
+api = twitter.Api(**cfg.credentials)
+DATABASE_NAME = cfg.database.name
+COLLECTION = cfg.database.raw_collection
 LANGUAGES = ["tr"]
 
 
