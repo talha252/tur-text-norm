@@ -6,9 +6,7 @@ cfg = None
 READ_COLLECTION = None
 WRITE_COLLECTION = None
 
-cfg = get_config("./db.toml") # TODO: değişecek burası
-
-def default_reader():
+def reader():
     _id = cfg.database.tweet_id
     _text = cfg.database.text
     cursor = db[READ_COLLECTION].find({_id: {"$exists": True}}, {_id: 1, _text: 1})
@@ -18,7 +16,7 @@ def default_reader():
         except:
             continue
 
-def default_writer(tokenized):
+def writer(tokenized):
     tweet_id = tokenized["tweet_id"]
     entities = tokenized["entities"]
     db[WRITE_COLLECTION].update({"_id": tweet_id}, {"$set": 
