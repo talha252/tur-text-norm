@@ -6,15 +6,17 @@ import functools
 class WordDB:
     def __init__(self, host, db=0, port=6379, password=None):
         self._rds = redis.Redis(host, db=db, port=port, password=password)
+        self._words = WordsObject(self._rds)
+        self._initials = InitialsObject(self._rds)
 
     def __getitem__(self, name):
         return self._rds.get(name).decode("utf8")
         
     def __getattr__(self, name):
         if name == "words":
-            return WordsObject(self._rds)
+            return self._words
         elif name == "initials":
-            return InitialsObject(self._rds)
+            return self._initials
         else:
             raise AttributeError("WordsDB doesn't have an attribute named %s" % name)
     
