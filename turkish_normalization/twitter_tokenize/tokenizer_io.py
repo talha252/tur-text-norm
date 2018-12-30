@@ -1,10 +1,13 @@
 from turkish_normalization.utils import get_config, connect_database
-from pprint import pprint
+import pathlib
+
 
 db = None
 cfg = None
 READ_COLLECTION = None
 WRITE_COLLECTION = None
+config_path = pathlib.PurePath(__file__).parent / "db.toml"
+cfg = get_config(str(config_path))
 
 def reader():
     _id = cfg.database.tweet_id
