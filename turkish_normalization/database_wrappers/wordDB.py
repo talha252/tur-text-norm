@@ -53,25 +53,19 @@ class WordsObject:
 class InitialsObject:
     def __init__(self, rds):
         self._rds = rds
-        self._counts = {}
     
     @functools.lru_cache(maxsize=5)
     def __getitem__(self, name):
         words = self._rds.smembers("i:%s:w" % name)
         words = [w.decode("utf8") for w in words]
-        self._counts[name] = len(words)
         return words
     
     def __setitem__(self, name, value):
         self._rds.sadd("i:%s:w" % name, value)
         self._rds.incr("total:count")
-        if name in self._counts:
-            self._counts[name] += 1
 
     def count(self, name):
-        if name not in self._counts:
-            self.__getitem__(name)
-        return self._counts[name]
+        return self._rds.scard("i:%s:w" % name)
 
 
 
