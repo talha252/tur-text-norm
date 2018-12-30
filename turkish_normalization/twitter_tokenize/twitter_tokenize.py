@@ -6,7 +6,7 @@ from tokenizer import tokenizer
 # TODO: write helps
 
 def make_parser(prog):
-    default_io_path = pathlib.PurePath(__file__).parent / "tokenizer_io.py"
+    default_io_path = pathlib.PurePath(__file__).parent / "default_io.py"
     token_choices = ["hashtags", "mentions", "emoticons", "urls", "emails", "numbers", "keywords", "punctuations", "words"]
     parser = argparse.ArgumentParser(prog=prog, description="Tokenize tweets")
     parser.add_argument("-r", "--reader", type=str, default=default_io_path)
