@@ -2,6 +2,8 @@ from unidecode import unidecode
 
 turkish_lcase = "abcçdefgğhıijklmnoöprsştuüvyz"
 turkish_ucase = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+turkish_vowels = "aeıiuüoö"
+turkish_constonants = "bcçdfgğhjklmnprsştvyz"
 subs_table = [
     ("$", "ş"),
     ("q", "g"),
