@@ -26,14 +26,13 @@ def morphological_analyzer(words, validate_only=False):
             continue
 
         if not skip:
-            try:
-                _ , stem, pos = line.split('\t')
-            # sometimes fst return with only two tab character
-            # for those situations use the except part
-            except ValueError:
-                _, pos = line.split('\t')
+            ret = line.split('\t')
+            if len(ret) == 3:
+                _ , stem, pos = ret
+            else:
+                _, pos = ret
                 stem = ""
-
+                
             if validate_only: 
                 skip = True
                 results.append(pos != "*UNKNOWN*")
