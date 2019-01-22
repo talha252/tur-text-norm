@@ -188,8 +188,18 @@ def damerau_levenshtein(
         substitute_costs = unit_matrix
     if transpose_costs is None:
         transpose_costs = unit_matrix
-    s1 = str(str1).encode(encoding)  
-    s2 = str(str2).encode(encoding)  
+    # s1 = str1
+    # s2 = str2
+    try:
+        s1 = str(str1).encode(encoding)
+    except UnicodeEncodeError:
+        return -2
+
+    try:
+        s2 = str(str2).encode(encoding)
+    except UnicodeEncodeError:
+        return -3
+
     return c_damerau_levenshtein(
         s1, len(s1),
         s2, len(s2),
