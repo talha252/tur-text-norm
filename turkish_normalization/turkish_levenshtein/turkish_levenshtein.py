@@ -1,11 +1,11 @@
-from .weighted_levenshtein import dam_lev
 import numpy as np
-
+from . import lev_encoding
+from .weighted_levenshtein import dam_lev
 # TODO: add docstrings
 # TODO: add type annotations
 
-TURKISH_ENCODING = "iso-8859-9"
-
+# TURKISH_ENCODING = "iso-8859-9"
+TURKISH_ENCODING = "lev-turkish"
 
 def w_ord(src_char):
     return int.from_bytes(src_char.encode(TURKISH_ENCODING), "big")
