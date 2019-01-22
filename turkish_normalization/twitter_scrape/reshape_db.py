@@ -1,11 +1,11 @@
 import sys
 from os import path
-from turkish_normalization.utils import connect_database, get_twitter_config
+from turkish_normalization.utils import connect_database, get_config
 
 
-TWITTER_CONFIG_FILE = "./twitter_config.json"
+TWITTER_CONFIG_FILE = "./twitter_config.toml"
 
-cf = get_twitter_config(TWITTER_CONFIG_FILE)
+cf = get_config(TWITTER_CONFIG_FILE)
 DATABASE_NAME = cf["database"]["name"]
 RAW_COLLECTION = cf["database"]["raw_collection"]
 PROCESSED_COLLECTION = cf["database"]["processed_collection"]
