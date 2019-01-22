@@ -25,14 +25,16 @@ def morphological_analyzer(words, validate_only=False):
                 intermediate = []
             continue
 
-        if not skip:
+        if not skip:           
             ret = line.split('\t')
+            # sometimes fst return with only two tab character
+            # for those situations use the except part
             if len(ret) == 3:
                 _ , stem, pos = ret
             else:
                 _, pos = ret
                 stem = ""
-                
+
             if validate_only: 
                 skip = True
                 results.append(pos != "*UNKNOWN*")
