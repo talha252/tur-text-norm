@@ -306,12 +306,14 @@ cdef DTYPE_t c_damerau_levenshtein(
             # printf('char_i: %c, char_j: %c, char_p: %c, COST: %.2f\n', char_i, char_j, char_p, current_total_cost)
             # printf('ins_cost: %.2f, ins_adj_cost: %.2f\n', insert_costs[char_j], delete_adjacent_costs[char_i, char_j])
         if min_total_cost > threshold: # if the current cost is bigger than threshold
-                return -1 # return meaningless value
+            Array2D_del(d)
+            return -1 # return meaningless value
         da[char_i] = i
         char_p = char_i
 
     ret_val = Array2D_n1_get(d, len1, len2)
     if ret_val > threshold: # sometimes threshold doesn't apply, for those use this if
+        Array2D_del(d)
         return -1
     Array2D_del(d)
     return ret_val
