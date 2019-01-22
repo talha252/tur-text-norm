@@ -1,6 +1,6 @@
 from collections import UserDict
 
-class Config(dict):
+class Attrdict(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for k, v in kwargs.items():

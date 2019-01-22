@@ -1,6 +1,6 @@
 import toml
 import json
-from .config import Config
+from .attr_dict import Attrdict
 from pymongo import MongoClient
 
 
@@ -17,7 +17,7 @@ def get_config(path):
         raise ValueError("Config file should be TOML file")
     with open(path) as cf:
         tml = toml.load(cf)
-        return Config(**tml)
+        return Attrdict(**tml)
 
 def connect_database(database, host="localhost", port=27017):
     client = MongoClient(f"mongodb://{host}:{port}")
