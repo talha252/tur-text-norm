@@ -278,7 +278,8 @@ cdef DTYPE_t c_damerau_levenshtein(
             # if we want to delete a repeating char, then use the repeating cost table
             if char_i == char_p:
                 del_cost = delete_repeating_costs[char_i]
-            elif char_i == char_j:
+            elif char_i == char_j and (i - j == 1 or j - i == 1):
+                # this only works for distance of one to prevent (bu --> bunu second u was consired as first u previously)
                 # if currently selected characters are the same then it's possible that
                 # adjacent character of current character might be inserted previously
                 # then we subtract insertion cost of that character and replace with delete_adjancency_cost
