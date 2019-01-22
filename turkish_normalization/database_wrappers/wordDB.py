@@ -4,10 +4,10 @@ import functools
 
 
 class WordDB:
-    def __init__(self, host, db=0, port=6379, password=None):
+    def __init__(self, host, db=0, port=6379, password=None, only_valids=False):
         self._rds = redis.Redis(host, db=db, port=port, password=password)
         self._words = WordsObject(self._rds)
-        self._initials = InitialsObject(self._rds)
+        self._initials = InitialsObject(self._rds, only_valids)
 
     def __getitem__(self, name):
         return self._rds.get(name).decode("utf8")
@@ -51,13 +51,14 @@ class WordsObject:
 
 
 class InitialsObject:
-    def __init__(self, rds):
+    def __init__(self, rds, only_valids):
         self._rds = rds
+        self._query = "i:%s:v" if only_valids else "i:%s:w"
     
     @functools.lru_cache(maxsize=5)
     def __getitem__(self, name):
-        words = self._rds.smembers("i:%s:w" % name)
-        words = [w.decode("utf8") for w in words]
+        words = self._rds.smembers(self._query % name)
+        words = [w for w in words]
         return words
     
     def __setitem__(self, name, value):
