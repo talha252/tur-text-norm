@@ -38,10 +38,9 @@ def turkish_levenshtein(
     threshold=None,
     ignore_repeating_char=True,
     insert_costs=None,
-    delete_adjacent_costs=None,
     substitute_costs=None,
     delete_costs=None,
-    adjacent_insert_cost=None
+    delete_adjacent_costs=None,
 ):
     # TODO: not sure, word counts belong here
     # dist_list = []
