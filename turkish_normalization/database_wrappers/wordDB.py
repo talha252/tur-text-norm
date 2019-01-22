@@ -5,12 +5,12 @@ import functools
 
 class WordDB:
     def __init__(self, host, db=0, port=6379, password=None, only_valids=False):
-        self._rds = redis.Redis(host, db=db, port=port, password=password)
+        self._rds = redis.Redis(host, db=db, port=port, password=password, decode_responses=True)
         self._words = WordsObject(self._rds)
         self._initials = InitialsObject(self._rds, only_valids)
 
     def __getitem__(self, name):
-        return self._rds.get(name).decode("utf8")
+        return self._rds.get(name)
         
     def __getattr__(self, name):
         if name == "words":
