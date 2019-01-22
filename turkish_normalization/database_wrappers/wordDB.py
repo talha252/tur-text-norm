@@ -65,6 +65,10 @@ class InitialsObject:
         self._rds.sadd("i:%s:w" % name, value)
         self._rds.incr("total:count")
 
+    def get(self, name, default):
+        res = self.__getitem__(name)
+        return res if res else default
+
     def count(self, name):
         return self._rds.scard("i:%s:w" % name)
 
