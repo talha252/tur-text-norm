@@ -304,7 +304,9 @@ cdef DTYPE_t c_damerau_levenshtein(
             Array2D_n1_at(d, i, j)[0] = current_total_cost
             if current_total_cost < min_total_cost:
                 min_total_cost = current_total_cost
-            # printf('char_i: %c, char_j: %c, char_p: %c, COST: %.2f\n', char_i, char_j, char_p, current_total_cost)
+            # printf("---------------------------------\n")
+            # printf("i: %d, j: %d, COST: %.2f\n", i, j, current_total_cost)
+            # printf('char_i: %d, char_j: %d, char_p: %d\n', char_i, char_j, char_p)
             # printf('ins_cost: %.2f, ins_adj_cost: %.2f\n', insert_costs[char_j], delete_adjacent_costs[char_i, char_j])
         if min_total_cost > threshold: # if the current cost is bigger than threshold
             Array2D_del(d)
