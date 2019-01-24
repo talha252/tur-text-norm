@@ -17,3 +17,4 @@ python_version = "3.6"
 
 [dev-packages]
 turkish-normalization = {editable = true,path = "."}
+pyprof2calltree = "*"
