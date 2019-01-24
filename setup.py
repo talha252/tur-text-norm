@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
+import numpy as np
+
 from setuptools import setup, find_packages
-from Cython.Build import cythonize
+from setuptools.extension import Extension
 
 
 install_requires = [
@@ -42,14 +44,13 @@ setup(
     keywords="turkish text normalization",
     packages=find_packages(include=["turkish_normalization"]),
     install_requires=install_requires,
-    setup_requires=["setuptools >= 18.0", "cython"],
+    setup_requires=["setuptools >= 18.0", "cython", "numpy"],
     python_requires=">=3.6,<4.0",
     entry_points={
         "console_scripts": [
             "tweet-grabber=turkish_normalization.twitter_scrape.tweet_grabber:main"
         ]
     },
-    ext_modules=cythonize(
-        "turkish_normalization/turkish_levenshtein/weighted_levenshtein/clev.pyx"
-    ),
+    ext_modules=[Extension("turkish_normalization.turkish_levenshtein.weighted_levenshtein.clev", ["turkish_normalization/turkish_levenshtein/weighted_levenshtein/clev.pyx"])],
+    zip_safe=False
 )
