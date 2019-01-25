@@ -44,7 +44,7 @@ setup(
     keywords="turkish text normalization",
     packages=find_packages(include=["turkish_normalization"]),
     install_requires=install_requires,
-    setup_requires=["setuptools >= 18.0", "cython", "numpy"],
+    setup_requires=["setuptools >= 18.0", "cython"],
     python_requires=">=3.6,<4.0",
     entry_points={
         "console_scripts": [
