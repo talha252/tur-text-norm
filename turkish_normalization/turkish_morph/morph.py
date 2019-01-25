@@ -12,7 +12,7 @@ def morph_base(in_text):
     p = subprocess.run(args, cwd=TOOL_DIR, input=data, stdout=PIPE, stderr=DEVNULL, encoding="UTF8")
     return p.stdout
 
-def morphological_analyzer(words, validate_only=False):
+def morphological_analyzer(words, validate_only=False, hard_validate=True):
     ret = morph_base(words).split('\n')
     results = []
     intermediate = []
@@ -30,14 +30,22 @@ def morphological_analyzer(words, validate_only=False):
             # sometimes fst return with only two tab character
             # for those situations use the except part
             if len(ret) == 3:
-                _ , stem, pos = ret
+                surface, stem, pos = ret
             else:
-                _, pos = ret
+                surface, pos = ret
                 stem = ""
 
             if validate_only: 
                 skip = True
-                results.append(pos != "*UNKNOWN*")
+                if pos != "*UNKNOWN*":
+                    results.append(True)
+                elif hard_validate:
+                    results.append(False)
+                elif "'" in surface or surface[0].isupper():
+                    results.append("SOFT")
+                else:
+                    results.append(False)
+
             else:
                 if pos != "*UNKNOWN*":
                     intermediate.append(stem + pos)
