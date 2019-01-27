@@ -4,6 +4,7 @@ turkish_lcase = "abcçdefgğhıijklmnoöprsştuüvyz"
 turkish_ucase = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
 turkish_vowels = "aeıiuüoö"
 turkish_constonants = "bcçdfgğhjklmnprsştvyz"
+turkish_spesific_chars = "çğıöşü"
 subs_table = [
     ("$", "ş"),
     ("q", "g"),
