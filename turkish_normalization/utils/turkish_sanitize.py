@@ -1,4 +1,6 @@
 from unidecode import unidecode
+from .chars import possible_latin_chars
+
 
 turkish_lcase = "abcçdefgğhıijklmnoöprsştuüvyz"
 turkish_ucase = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
@@ -54,3 +56,13 @@ def turkish_sanitize(src_str):
 
 def turkish_compare(str1, str2):
     return turkish_sanitize(str1) == turkish_sanitize(str2)
+
+def turkishify(src_str):
+    src_str = turkish_lower(src_str)
+    c_chars = []
+    for c in src_str:
+        c_ch = possible_latin_chars.get(c)
+        if c_ch is None:
+            return -1
+        c_chars.append(c_ch)
+    return "".join(c_chars)
