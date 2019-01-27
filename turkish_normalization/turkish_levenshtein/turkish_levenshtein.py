@@ -34,19 +34,18 @@ def tur_enc(src_str):
 
 set_costs = wl.set_costs
 
-def initiliaze_costs(chars, costs):
-    if not isinstance(costs, list):
-        costs = [costs for _ in chars]
-    zip_chars = zip(chars, costs)
-    if isinstance(chars[0], tuple):
+def initiliaze_costs(*tuples):
+    chars = tuples[0][0][0]
+    if isinstance(chars, tuple):
         np_costs = np.ones((256, 256), dtype=np.float64)
-        for (o, n), cost in zip_chars:
-            np_costs[w_ord(o), w_ord(n)] = cost
+        for chars, cost in tuples:
+            for f, t in chars:
+                np_costs[w_ord(f), w_ord(t)] = cost
     else:
         np_costs = np.ones(256, dtype=np.float64)
-        for c, cost in zip_chars:
-            np_costs[w_ord(c)] = cost
-
+        for chars, cost in tuples:
+            for c in chars:
+                np_costs[w_ord(c)] = cost
     return np_costs
 
 
