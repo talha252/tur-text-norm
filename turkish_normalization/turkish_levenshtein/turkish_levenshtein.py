@@ -48,6 +48,8 @@ def initiliaze_costs(*tuples):
                 np_costs[w_ord(c)] = cost
     return np_costs
 
+def get_zero_array():
+    return np.zeros(256, dtype=np.float64)
 
 def turkish_levenshtein(
     source_words,
