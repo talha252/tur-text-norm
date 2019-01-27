@@ -60,11 +60,11 @@ def turkish_levenshtein(
     if threshold is None:
         threshold = np.finfo(np.float64).max
 
-    for word in source_words:
+    for org_word, word in source_words:
         dist = dam_lev(
             word,
             target_word,
             threshold=threshold,
         )
-        yield (dist, word)
+        yield (dist, org_word)
 
