@@ -17,6 +17,33 @@ cymatrix = cvarray(shape=(ALPHABET_SIZE, ALPHABET_SIZE), itemsize=sizeof(double)
 cdef DTYPE_t[:,::1] unit_matrix = cymatrix
 unit_matrix[:, :] = 1
 
+cdef DTYPE_t[::1] _insert_costs = unit_array
+cdef DTYPE_t[:,::1] _delete_adjacent_costs = unit_matrix
+cdef DTYPE_t[::1] _delete_costs = unit_array
+cdef DTYPE_t[::1] _delete_repeating_costs = unit_array
+cdef DTYPE_t[:,::1] _substitute_costs = unit_matrix
+cdef DTYPE_t[:,::1] _transpose_costs = unit_matrix
+
+def set_costs(insert_costs=None, substitute_costs=None, delete_costs=None, delete_adjacent_costs=None, delete_repeating_costs=None, transpose_costs=None):
+    global _insert_costs, _delete_adjacent_costs, _delete_costs, _delete_repeating_costs, _substitute_costs, _transpose_costs
+    if insert_costs is not None:
+        _insert_costs = insert_costs
+
+    if substitute_costs is not None:
+        _substitute_costs = substitute_costs
+
+    if delete_costs is not None:
+        _delete_costs = delete_costs
+
+    if delete_adjacent_costs is not None:
+        _delete_adjacent_costs = delete_adjacent_costs
+
+    if delete_repeating_costs is not None:
+        _delete_repeating_costs = delete_repeating_costs
+
+    if transpose_costs is not None:
+        _transpose_costs = transpose_costs
+
 
 # Begin helper functions
 
@@ -146,70 +173,20 @@ cdef inline unsigned char str_1_get(unsigned char* s, Py_ssize_t i) nogil:
 
 
 def damerau_levenshtein(
-    str str1,
-    str str2,
-    str encoding,
+    bytes str1,
+    bytes str2,
     DTYPE_t threshold=DTYPE_MAX,
-    DTYPE_t[::1] insert_costs=None,
-    DTYPE_t[:,::1] delete_adjacent_costs=None,
-    DTYPE_t[::1] delete_costs=None,
-    DTYPE_t[::1] delete_repeating_costs=None,
-    DTYPE_t[:,::1] substitute_costs=None,
-    DTYPE_t[:,::1] transpose_costs=None):
-    """
-    Calculates the Damerau-Levenshtein distance between str1 and str2,
-    provided the costs of inserting, deleting, substituting, and transposing characters.
-    The costs default to 1 if not provided.
-
-    For convenience, this function is aliased as clev.dam_lev().
-
-    :param str str1: first string
-    :param str str2: second string
-    :param np.ndarray insert_costs: a numpy array of np.float64 (C doubles) of length 128 (0..127),
-        where insert_costs[i] is the cost of inserting ASCII character i
-    :param np.ndarray delete_costs: a numpy array of np.float64 (C doubles) of length 128 (0..127),
-        where delete_costs[i] is the cost of deleting ASCII character i
-    :param np.ndarray substitute_costs: a 2D numpy array of np.float64 (C doubles) of dimensions (128, 128),
-        where substitute_costs[i, j] is the cost of substituting ASCII character i with
-        ASCII character j
-    :param np.ndarray transpose_costs: a 2D numpy array of np.float64 (C doubles) of dimensions (128, 128),
-        where transpose_costs[i, j] is the cost of transposing ASCII character i with
-        ASCII character j, where character i is followed by character j in the string
-    """
-    if insert_costs is None:
-        insert_costs = unit_array
-    if delete_adjacent_costs is None:
-        delete_adjacent_costs = unit_matrix
-    if delete_costs is None:
-        delete_costs = unit_array
-    if delete_repeating_costs is None:
-        delete_repeating_costs = unit_array
-    if substitute_costs is None:
-        substitute_costs = unit_matrix
-    if transpose_costs is None:
-        transpose_costs = unit_matrix
-    # s1 = str1
-    # s2 = str2
-    try:
-        s1 = str(str1).encode(encoding)
-    except UnicodeEncodeError:
-        return -2
-
-    try:
-        s2 = str(str2).encode(encoding)
-    except UnicodeEncodeError:
-        return -3
-
+    ):
     return c_damerau_levenshtein(
-        s1, len(s1),
-        s2, len(s2),
+        str1, len(str1),
+        str2, len(str2),
         threshold,
-        insert_costs,
-        delete_costs,
-        delete_adjacent_costs,
-        delete_repeating_costs,
-        substitute_costs,
-        transpose_costs
+        _insert_costs,
+        _delete_costs,
+        _delete_adjacent_costs,
+        _delete_repeating_costs,
+        _substitute_costs,
+        _transpose_costs
     )
 
 dam_lev = damerau_levenshtein
