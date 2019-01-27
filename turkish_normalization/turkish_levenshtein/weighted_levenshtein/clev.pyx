@@ -1,6 +1,6 @@
 #!python
-# cython: language_level=3, boundscheck=False, wraparound=False, embedsignature=True, linetrace=True, c_string_type=str, c_string_encoding=iso-8859-9
-# distutils: define_macros=CYTHON_TRACE_NOGIL=1
+# cython: language_level=3, boundscheck=False, wraparound=False, embedsignature=True, linetrace=False, c_string_type=str, c_string_encoding=iso-8859-9
+# distutils: define_macros=CYTHON_TRACE_NOGIL=0
 
 from cython.view cimport array as cvarray
 from .clev cimport DTYPE_t, DTYPE_MAX, ALPHABET_SIZE
