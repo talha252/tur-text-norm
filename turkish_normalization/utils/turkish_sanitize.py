@@ -65,4 +65,4 @@ def turkishify(src_str):
         if c_ch is None:
             return -1
         c_chars.append(c_ch)
-    return "".join(c_chars)
+    return turkish_lower("".join(c_chars)) # sometimes it contains capital letters
