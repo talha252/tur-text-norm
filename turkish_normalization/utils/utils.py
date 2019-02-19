@@ -2,6 +2,8 @@ import toml
 import json
 from .attr_dict import Attrdict
 from pymongo import MongoClient
+from functools import singledispatch
+from pathlib import Path
 
 
 def read_data(filename):
@@ -18,6 +20,19 @@ def get_config(path):
     with open(path) as cf:
         tml = toml.load(cf)
         return Attrdict(**tml)
+
+@singledispatch
+def get_config(path):
+    if not path.suffix == ".toml":
+        raise ValueError("Config file should be TOML file")
+    return read_toml(path)
+
+@get_config.register(str)
+def _(path):
+    if not path.endswith(".toml"):
+        raise ValueError("Config file should be TOML file")
+    return read_toml(path)
+
 
 def connect_database(database, host="localhost", port=27017):
     client = MongoClient(f"mongodb://{host}:{port}")
