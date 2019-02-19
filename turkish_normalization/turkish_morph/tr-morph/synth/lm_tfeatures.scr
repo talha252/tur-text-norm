@@ -1,0 +1,9 @@
+lexicon1 ./synth/tfeatures_synth_enc.fst
+lexicon2 ./synth/turknum_synth_enc.fst
+lexicon3 ./synth/turkunk_synth_enc.fst
+unknown ./synth/unknown.fst
+
+lexicon1
+lexicon2
+lexicon3
+unknown

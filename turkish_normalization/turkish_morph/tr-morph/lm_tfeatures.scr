@@ -1,7 +1,0 @@
-lexicon1 lm_tfeatures.fst
-lexicon2 lm_turknum.fst
-unknown unknown.fst
-
-lexicon1
-lexicon2
-unknown

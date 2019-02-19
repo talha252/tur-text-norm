@@ -5,9 +5,10 @@ from pathlib import Path
 
 TOOL_DIR = Path(__file__).with_name("tr-morph")
 
-def morph_base(in_text):
+def morph_base(in_text, generate=False):
     """ Analyze the text using modified Kemal Oflazer's FST"""
-    args = "./lookup -f lm_tfeatures.scr -utf8".split()
+    scr_path = "./%s/lm_tfeatures.scr" % ("synth" if generate else "anlyz")
+    args = f"./lookup -f {scr_path}".split()
     data = "\n".join(in_text)
     p = subprocess.run(args, cwd=TOOL_DIR, input=data, stdout=PIPE, stderr=DEVNULL, encoding="UTF8")
     return p.stdout
@@ -51,7 +52,23 @@ def morphological_analyzer(words, validate_only=False, hard_validate=True):
                     intermediate.append(stem + pos)
     return results
 
-
+def morphological_generator(text):
+    ret = morph_base(text, generate=True).split('\n')
+    results = []
+    intermediate = []
+    for line in ret[:-1]:
+        if not line:
+            results.append(intermediate)
+            intermediate = []
+            continue
+        res = line.split("\t")
+        if len(res) == 3:
+            _, _, gen_word = res
+        else:
+            _, gen_word = res
+        if gen_word != "*UNKNOWN*":
+            intermediate.append(gen_word)
+    return results
 
 
 

@@ -1,0 +1,7 @@
+lexicon1 ./encoded/tfeatures_enc.fst
+lexicon2 ./encoded/turknum_enc.fst
+unknown ./encoded/unknown.fst
+
+lexicon1
+lexicon2
+unknown
