@@ -13,10 +13,8 @@ def read_data(filename):
 def write_json(filename, data):
     with open(filename, 'w') as fp:
         json.dump(data, fp, indent=4, ensure_ascii=False, sort_keys=True)
-        
-def get_config(path):
-    if not path.endswith(".toml"):
-        raise ValueError("Config file should be TOML file")
+
+def read_toml(path):
     with open(path) as cf:
         tml = toml.load(cf)
         return Attrdict(**tml)
