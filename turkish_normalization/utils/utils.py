@@ -8,10 +8,6 @@ from pathlib import Path
 def create_folder(*paths):
     path = Path(*paths).mkdir(parents=True, exist_ok=True)
 
-def read_data(filename):
-    with open(filename) as fp:
-        return json.load(fp)
-
 def read_plain(path):
     with open(path) as fp:
         return fp.read().split("\n")
@@ -19,6 +15,11 @@ def read_plain(path):
 def write_plain(path, data):
     with open(path, "w") as fp:
         fp.write("\n".join(data))
+
+read_data = read_json
+def read_json(filename):
+    with open(filename) as fp:
+        return json.load(fp)
 
 def write_json(filename, data):
     with open(filename, 'w') as fp:
