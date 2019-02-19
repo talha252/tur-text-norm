@@ -1,1 +1,1 @@
-from .morph import morphological_analyzer
+from .morph import morphological_analyzer, morphological_generator
