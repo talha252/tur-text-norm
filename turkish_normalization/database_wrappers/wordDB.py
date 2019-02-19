@@ -74,6 +74,19 @@ class InitialsObject:
         res = self.__getitem__(name)
         return res[beg:end]
 
+    def get_counts(self, name):
+        res = self.__getitem__(name)
+        counts = []
+        pipe = self._rds.pipeline()
+        for w in res:
+            pipe.get("w:%s:c" % w)
+            if len(pipe) == 20000:
+                c = pipe.execute()
+                counts.extend(c)
+        counts.extend(pipe.execute())
+        counts = {w:int(c) for w, c in zip(res, counts)}
+        return counts
+
     def count(self, name):
         return self._rds.scard("i:%s:w" % name)
 
