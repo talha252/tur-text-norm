@@ -54,7 +54,7 @@ class InitialsObject:
     def __init__(self, rds, only_valids):
         self._rds = rds
         self._query = "i:%s:v" if only_valids else "i:%s:w"
-    
+
     @functools.lru_cache(maxsize=5)
     def __getitem__(self, name):
         words = self._rds.smembers(self._query % name)
@@ -68,6 +68,11 @@ class InitialsObject:
     def get(self, name, default):
         res = self.__getitem__(name)
         return res if res else default
+
+    @functools.lru_cache(maxsize=2)
+    def get_range(self, name, beg, end):
+        res = self.__getitem__(name)
+        return res[beg:end]
 
     def count(self, name):
         return self._rds.scard("i:%s:w" % name)
