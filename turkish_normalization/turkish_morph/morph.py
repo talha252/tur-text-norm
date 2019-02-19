@@ -20,7 +20,7 @@ def morphological_analyzer(words, validate_only=False, hard_validate=True):
     for line in ret[:-1]:
         if not line:
             skip = False
-            if not validate_only and intermediate:
+            if not validate_only:
                 results.append(intermediate)
                 intermediate = []
             continue
@@ -49,10 +49,6 @@ def morphological_analyzer(words, validate_only=False, hard_validate=True):
             else:
                 if pos != "*UNKNOWN*":
                     intermediate.append(stem + pos)
-                else:
-                    results.append(None)
-                
-    
     return results
 
 
