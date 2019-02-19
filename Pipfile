@@ -11,6 +11,7 @@ cython = "*"
 unidecode = "*"
 redis = "*"
 toml = "*"
+turkish-normalization = {editable = true,path = "."}
 
 [requires]
 python_version = "3.6"
