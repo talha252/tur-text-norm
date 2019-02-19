@@ -12,6 +12,14 @@ def read_data(filename):
     with open(filename) as fp:
         return json.load(fp)
 
+def read_plain(path):
+    with open(path) as fp:
+        return fp.read().split("\n")
+
+def write_plain(path, data):
+    with open(path, "w") as fp:
+        fp.write("\n".join(data))
+
 def write_json(filename, data):
     with open(filename, 'w') as fp:
         json.dump(data, fp, indent=4, ensure_ascii=False, sort_keys=True)
