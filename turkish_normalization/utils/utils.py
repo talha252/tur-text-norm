@@ -5,6 +5,8 @@ from pymongo import MongoClient
 from functools import singledispatch
 from pathlib import Path
 
+def create_folder(*paths):
+    path = Path(*paths).mkdir(parents=True, exist_ok=True)
 
 def read_data(filename):
     with open(filename) as fp:
