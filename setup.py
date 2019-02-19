@@ -1,6 +1,4 @@
 # -*- coding: UTF-8 -*-
-import numpy as np
-
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
 
